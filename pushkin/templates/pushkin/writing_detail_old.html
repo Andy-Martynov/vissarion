@@ -1,0 +1,38 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <style>
+        .plot {
+//            max-width: 30vw;
+        }
+    </style>
+    <div class="w3-margin container-fluid">
+        <h2>{{ writing.author }}, "{{ writing }}"</h2>
+        <div class="row">
+            <div class="col-12 p-1">
+                <table>
+                    <tr><td>Язык: </td><td>{{ writing.get_lang_display }}</td></tr>
+                    <tr><td>Жанр: </td><td>{{ writing.get_genre_display }}</td></tr>
+                    <tr><td>Файл: </td><td>{{ info.file }}</td></tr>
+                    <tr><td>Размер: </td><td>{{ info.size }} Kb</td></tr>
+                </table>
+            </div>
+            <div class="col-12 p-1" style="text-align: center;">
+                {% for fn in plots %}
+                    <img src="{{ fn.1 }}" class="plot w3-image w3-center">
+                {% endfor %}
+            </div>
+        </div>
+
+        <details>
+            <summary>TEXT</summary>
+            {{ info.text }}
+        </details>
+        <details>
+            <summary>TOKENS</summary>
+            {{ info.tokens }}
+        </details>
+    </div>
+{% endblock %}

@@ -27,10 +27,24 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['vissarion.pythonanywhere.com']
 
+# EMAIL
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'andymartynovmail@gmail.com'
+EMAIL_HOST_PASSWORD = 'eslkuyabojuicflb'
+
+# если используется защищенное соединение
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    'account',
+    'hub',
+    'pushkin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,6 +94,8 @@ DATABASES = {
     }
 }
 
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

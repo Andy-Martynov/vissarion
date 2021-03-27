@@ -1,0 +1,22 @@
+{% extends "hub/layout.html" %}
+
+{% block main %}
+    <div class="w3-margin">
+        <h2>REGISTRATION</h2>
+        {% if message %}
+            <div class="w3-section w3-padding w3-light-gray w3-text-red">{{ message }}</div>
+        {% endif %}
+        <form class="w3-container" method="post">
+            {% csrf_token %}
+            <input class="w3-light-gray w3-input w3-margin w3-large" autofocus type="text" name="username" placeholder="Username">
+            <input class="w3-light-gray w3-input w3-margin w3-large" type="email" name="email" placeholder="Email address">
+            <p>* please use your real e-mail, to confirm your registration</p>
+            <input class="w3-light-gray w3-input w3-margin w3-large" type="password" name="password" placeholder="Password">
+            <input class="w3-light-gray w3-input w3-margin w3-large" type="password" name="confirmation" placeholder="Confirm Password">
+            <input class="w3-button w3-light-gray w3-margin-left w3-border w3-round-xlarge" type="submit" value="REGISTER">
+        </form>
+        <div class="w3-container w3-light-gray w3-section w3-margin-left w3-padding w3-large">
+            <p class="w3-large">Already have an account? <a href="{% url 'login' %}"><u>Log in here</u></a></p>
+        </div>
+    </div>
+{% endblock %}

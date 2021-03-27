@@ -1,0 +1,44 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="{% static 'pushkin/list.js' %}"></script>
+{% endblock head %}
+
+{% block nav_add %}
+    <li class="nav-item">
+        <p  class="nav-link">Mark all <input id="toggle_all_active" type="checkbox" onchange="toggleAllActive()"></p>
+    </li>
+{% endblock %}
+
+{% block main %}
+<div class="w3-responsive w3-section">
+    <table class="w3-table-all">
+        <tr>
+            <th>Название</th>
+            <th>Жанр</th>
+            <th>Язык</th>
+            <th>Автор</th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for author in authors %}
+            <tr><td colspan="6" class="w3-sand">{{ author }}</td></tr>
+            {% for writing in object_list %}
+                {% if writing.author == author %}
+                    <tr>
+                        <td><a href="{% url 'pushkin:writing_detail' writing.id %}">{{ writing }}</a></td>
+                        <td>{{ writing.get_genre_display }}</td>
+                        <td>{{ writing.get_lang_display }}</td>
+                        <td>{{ writing.author }}</td>
+                        <td><a href="{% url 'pushkin:writing_update' writing.id %}">EDIT</a></td>
+                        <th><input class="toggle_writing_active" type="checkbox" aid="{{ writing.author.id }}" wid="{{ writing.id }}" onchange="toggleWritingActive({{ writing.id }})" {% if writing.active %}checked{% endif %}></th>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

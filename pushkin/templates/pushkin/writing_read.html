@@ -1,0 +1,13 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="w3-margin">
+        <p>{{ writing.file }}</p>
+        <h2>{{ writing.author }}, {{ writing }}</h2>
+
+        <pre>{{ writing.text }}</pre>
+
+    </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <style>
+        .plot {
+            max-width: 500px;
+        }
+        .bigplot {
+            max-width: 100%;
+        }
+    </style>
+    <div class="w3-margin container-fluid">
+        <h2>{{ author }}</h2>
+
+        {% for item in distances %}
+            <p class="mt-3 mb-0{% if item.writing == nearest %} w3-text-red{% endif %}"><b>{{ item.author }} {{ item.percent|floatformat:0 }}%</b></p>
+            {% for dist in item.distances %}
+                <span class="ml-4">{{ dist.param }} : {{ dist.distance|floatformat:2 }}, {{ dist.percent|floatformat:0 }}%</span>
+            {% endfor %}
+        {% endfor %}
+
+        <h3>Наиболее близкий по стилю автор : <span class="w3-text-red">{{ nearest }}</span></h3>
+
+        <details>
+            <summary>Графики статистики текста</summary>
+            <div style="text-align: center;">
+                {% for fn in plots %}
+                    <img src="{{ fn.1 }}" class="plot w3-image w3-center">
+                {% endfor %}
+            </div>
+        </details>
+        {% for histogram in histograms %}
+            <details>
+                <summary>Гистограмма совпадения стиля</summary>
+                <div style="text-align: center;">
+                    <img src="{{ histogram }}" class="bigplot w3-image w3-center">
+                </div>
+            </details>
+        {% endfor %}
+        <details>
+            <summary>TEXT</summary>
+            {{ text }}
+        </details>
+        <details>
+            <summary>TOKENS</summary>
+            {{ tokens }}
+        </details>
+        <details>
+            <summary>TOP MOST COMMON</summary>
+            {{ most_common }}
+        </details>
+    </div>
+{% endblock %}

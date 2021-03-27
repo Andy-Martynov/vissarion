@@ -1,0 +1,24 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+<style>
+    .round {
+        text-align: justify;
+    }
+    .round img {
+        float: left;
+        shape-outside: circle(50%);
+        margin-right: .5em;
+        border-radius: 50%;
+    }
+</style>
+<div id="index">
+    <h1 class="w3-center">НЕИСТОВЫЙ ВИССАРИОН</h1>
+    <div class="w3-center"><img src="{% static 'hub/belinsky.jpeg' %}" class="w3-image w3-circle"></div>
+    <h3 class="w3-center">Ну что, блядь, посмотрим, насколько ты Пушкин!</h3>
+</div>
+{% endblock %}
+
+

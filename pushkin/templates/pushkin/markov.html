@@ -1,0 +1,12 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="w3-responsive w3-margin">
+        <h2>В стиле {{ title }}</h2>
+        <div>
+            {{ masterpiece|safe }}
+        </div>
+    </div>
+{% endblock %}

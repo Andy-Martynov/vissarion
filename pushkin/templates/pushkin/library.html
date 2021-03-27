@@ -1,0 +1,15 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="w3-margin">
+        <h2>LIBRARY</h2>
+        {% for author in library %}
+            <h3>{{ author.name }} => {{ author.folder }}</h3>
+            {% for writing in author.writings %}
+                <p class="ml-4{% if writing.status == 'EMPTY' %} w3-text-red{% endif %}{% if writing.status == 'NOFILE' %} w3-text-red w3-xlarge{% endif %}">{{ writing.name }}, {{ writing.path }}, ({{ writing.size }}), {{ writing.status }})</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}

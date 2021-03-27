@@ -1,0 +1,87 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <style>
+        .plot {
+            max-width: 250px;
+            cursor: url({% static 'images/icons/zoom_60.png' %}), auto;;
+        }
+        .bigplot {
+            max-width: 100%;
+            max-height: 100vh;
+            margin: auto;
+        }
+        .fullscreen {
+            z-index: 999999;
+            position:fixed;
+            top:0;
+            left:0;
+            width: 100vw;
+            height: 100vh;
+            display:none;
+            background-color: white;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            button = document.querySelector('#continue');
+            if (button != null) {
+                button.click();
+            }
+        });
+    </script>
+
+    <div class="w3-margin container-fluid">
+        <h2>{{ writing.author }}, {{ writing }}</h2>
+        <details open>
+            <summary>Графики статистики текста</summary>
+            <div style="text-align: center;">
+                {% for fn in plots %}
+                    <div id="plot_{{ forloop.counter }}" class="w3-display-container fullscreen">
+                        <span class="w3-display-topright w3-text-red w3-xlarge" onclick="document.querySelector('#plot_{{ forloop.counter }}').style.display='none'">&times;CLOSE</span>
+                        <img class="bigplot" id="img_{{ forloop.counter }}" src="{{ fn.1 }}">
+                    </div>
+                    <img src="{{ fn.1 }}" class="plot w3-image w3-center"  onclick="document.querySelector('#plot_{{ forloop.counter }}').style.display='block'">
+                {% endfor %}
+            </div>
+        </details>
+        <details>
+            <summary>TEXT ({{ char_count }})</summary>
+            {{ text }}
+        </details>
+        <details>
+            <summary>CLEANED TEXT ({{ cleaned_char_count }})</summary>
+            {{ cleaned_text }}
+        </details>
+        <details>
+            <summary>TOKENS ({{ word_token_count }})</summary>
+            {{ word_tokens }}
+        </details>
+        <details>
+            <summary>TOKENS CLEANED ({{ token_count }})</summary>
+            {{ tokens }}
+        </details>
+        <details>
+            <summary>SENTENCES ({{ sent_token_count }})</summary>
+            {{ sent_tokens }}
+        </details>
+        <details>
+            <summary>FREQ DIST</summary>
+            {{ freq_dist }}
+        </details>
+        <details>
+            <summary>TOP MOST COMMON</summary>
+            {{ most_common }}
+        </details>
+        <details>
+            <summary>BIGRAMS ({{ bigrams_count }})</summary>
+            {{ bigrams }}
+        </details>
+        <details>
+            <summary>TOP MOST COMMON BIGRAMS</summary>
+            {{ bigrams_most_common }}
+        </details>
+    </div>
+{% endblock %}

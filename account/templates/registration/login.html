@@ -1,0 +1,24 @@
+{% extends 'hub/layout.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block main %}
+    <div class="w3-margin">
+        <h2>Login</h2>
+        {% if form.non_field_errors %}
+            <div class="w3-section w3-padding w3-light-gray w3-text-red">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+        {% if form.username.errors %}
+            <div class="w3-section w3-padding w3-light-gray w3-text-red">{{ form.username.errors }}</div>
+        {% endif %}
+            <input class="w3-light-gray w3-input w3-section w3-large" autofocus type="text" name="username" placeholder="Username">
+        {% if form.password.errors %}
+            <div class="w3-section w3-padding w3-light-gray w3-text-red">{{ form.password.errors }}</div>
+        {% endif %}
+            <input class="w3-light-gray w3-input w3-section w3-large" type="password" name="password" placeholder="Password">
+            <button type="submit" class="w3-button w3-light-gray w3-margin-left w3-border w3-round-xlarge">Login</button>
+        </form>
+    </div>
+{% endblock %}

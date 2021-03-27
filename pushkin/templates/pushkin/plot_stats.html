@@ -1,0 +1,167 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            button = document.querySelector('#continue');
+            if (button != null) {
+                button.click();
+            }
+        });
+    </script>
+    <style>
+        td, th {
+            border: 1px solid gray;
+        }
+    </style>
+    {% if continue %}
+        <a  id='continue' href="{% url 'pushkin:plot_stats' mode param %}" style="display:none">CONTINUE</a><br>
+        <h2 class="w3-margin">Строим матрицу отличий стилей, метод "{{ param }}" пожалуйста подождите.</h2>
+    {% else %}
+        <div class="w3-responsive w3-section">
+            <h2 class="w3-center">{{ param }}</h2>
+
+            {% if plot %}
+                <details open>
+                    <summary>
+                        Графики функций по произведениям, метод "{{ param }}
+                    </summary>
+                    <img src="{{ plot }}" style="max-width:100%; max-height:90vh;">
+                </details>
+            {% endif %}
+
+            <details class="w3-margin">
+                <summary>
+                    Матрица отличий по {{ param}} :
+                </summary>
+                <table class="w3-table w3-tiny w3-centered">
+                    {% for row in matrix %}
+                        {% if forloop.first %}
+                            <tr>
+                                <td class="w3-light-gray"></td>
+                                {% for object in objects %}
+                                    <th>{{ object.label }}</th>
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <tr class="w3-hover-pale-green">
+                            <th>
+                                {% for object in objects %}
+                                    {% if forloop.counter == forloop.parentloop.counter %}
+                                        {{ object.label }}
+                                    {% endif %}
+                                {% endfor %}
+                            </th>
+                            {% for cell in row %}
+                                {% if forloop.counter == forloop.parentloop.counter %}
+                                    <td class="w3-light-gray">0</td>
+                                {% else %}
+                                    {% if cell < 0.001 %}
+                                        <td class="w3-sand"><b class="w3-text-red">0</b></td>
+                                    {% else %}
+                                        <td>{{ cell|floatformat:2 }}</td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </details>
+
+            <details class="w3-margin" open>
+                <summary>
+                    Матрица отличий по {{ param}} приведенная:
+                </summary>
+                <table class="w3-table w3-tiny w3-centered">
+                    {% for row in direct %}
+                        {% if forloop.first %}
+                            <tr>
+                                <td class="w3-light-gray"></td>
+                                {% for object in objects %}
+                                    <th>{{ object.label }}</th>
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <tr class="w3-hover-pale-green">
+                            <th>
+                                {% for object in objects %}
+                                    {% if forloop.counter == forloop.parentloop.counter %}
+                                        {{ object.label }}
+                                    {% endif %}
+                                {% endfor %}
+                            </th>
+                            {% for cell in row %}
+                                {% if forloop.counter == forloop.parentloop.counter %}
+                                    <td class="w3-light-gray">0</td>
+                                {% else %}
+                                    {% if cell < 0.1 %}
+                                        <td class="w3-sand"><b class="w3-text-red">0</b></td>
+                                    {% else %}
+                                        <td>{{ cell|floatformat:2 }}</td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </details>
+
+            <details class="w3-margin" open>
+                <summary>
+                    Матрица совпадений по {{ param}} приведенная :
+                </summary>
+                <table class="w3-table w3-tiny w3-centered">
+                    {% for row in reverse %}
+                        {% if forloop.first %}
+                            <tr>
+                                <td class="w3-light-gray"></td>
+                                {% for object in objects %}
+                                    <th>{{ object.label }}</th>
+                                {% endfor %}
+                            </tr>
+                        {% endif %}
+                        <tr class="w3-hover-pale-green">
+                            <th>
+                                {% for object in objects %}
+                                    {% if forloop.counter == forloop.parentloop.counter %}
+                                        {{ object.label }}
+                                    {% endif %}
+                                {% endfor %}
+                            </th>
+                            {% for cell in row %}
+                                {% if forloop.counter == forloop.parentloop.counter %}
+                                    <td class="w3-light-gray">100</td>
+                                {% else %}
+                                    {% if cell == 100 %}
+                                        <td class="w3-sand"><b class="w3-text-red">0</b></td>
+                                    {% else %}
+                                        <td>{{ cell|floatformat:2 }}</td>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </details>
+
+            <details class="w3-margin" open>
+                <summary>
+                    Файлы для скачивания :
+                </summary>
+                {% for file in files %}
+                        <a
+                            class="w3-button w3-white w3-border w3-border-blue w3-hover-blue w3-round-large w3-margin"
+                            href="{{ file.url }}"
+                            download="{{ file.name }}">
+                            📥 {{ file.title }}
+                        </a>
+                {% endfor %}
+            </details>
+        </div>
+
+
+
+    {% endif %}
+{% endblock %}

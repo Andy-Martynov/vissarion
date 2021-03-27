@@ -1,0 +1,18 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <form class="w3-container w3-xlarge m-2 p-2" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.title }}
+        {{ form.author }}
+        {{ form.genre }}
+        {{ form.lang }}
+        {{ form.file }}
+        {{ form.active }}
+        {{ form.hidden }}
+        {{ form.is_sample }}
+        <input class="w3-button w3-margin w3-teal w3-round-xlarge" type="submit" value="OK">
+    </form>
+{% endblock %}

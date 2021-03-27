@@ -1,0 +1,176 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+    <script src="{% static 'pushkin/list.js' %}"></script>
+{% endblock head %}
+
+{% block nav_add------- %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" nav_index="locations" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span rus="К сравнению" eng="Compare List">К сравнению</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <p class="dropdown-header" rus="Выбрать" eng="Select">Выбрать</p>
+            <a class="dropdown-item" href="{% url 'pushkin:all_active' 'with_writings' %}" rus="Всё" eng="All">Всё</a>
+            <a class="dropdown-item" href="{% url 'pushkin:all_active' %}" rus="Только авторов" eng="Authors only">Только авторов</a>
+
+            <div class="dropdown-divider"></div>
+            <p class="dropdown-header" rus="Убрать" eng="DeSelect">Убрать</p>
+            <a class="dropdown-item" href="{% url 'pushkin:all_passive' 'with_writings' %}" rus="Всё" eng="All">Всё</a>
+            <a class="dropdown-item" href="{% url 'pushkin:all_passive'  %}" rus="Только авторов" eng="Authors only">Только авторов</a>
+
+            <div class="dropdown-divider"></div>
+            <p class="dropdown-header" rus="Показать" eng="Show">Показать</p>
+            <a class="dropdown-item" href="{% url 'pushkin:author_list' %}" rus="Всё" eng="All">Всё</a>
+            <a class="dropdown-item" href="{% url 'pushkin:author_list' 'checked_only' %}" rus="Только выбранное" eng="Selected only">Только выбранное</a>
+        </div>
+    </li>
+{% endblock %}
+
+{% block main %}
+
+    <style>
+        .scroll {
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-3 p-2 m-0 scroll">
+                <table class="w3-table">
+                    <tr><th>Всего</th></tr>
+                    <tr>
+                        <td>авторов:</td>
+                        <td id="authors_count" class="w3-text-red">{{ object_list.count }}</td>
+                        <td> <a href="{% url 'pushkin:all_active' %}"> <i class="fa fa-check-square-o"></i><sub></sub></a></td>
+                    </tr>
+                    <tr>
+                        <td>произведений:</td>
+                        <td id="writings_count" class="w3-text-red">{{ writings.count }}</td>
+                        <td> <a href="{% url 'pushkin:all_active' 'with_writings' %}"> <i class="fa fa-check-square-o"></i><sub></sub></a></td>
+                    </tr>
+                    <tr><th>Выбрано</th></tr>
+                    <tr>
+                        <td>авторов:</td>
+                        <td id="active_a" class="w3-text-red">{{ active_a }}</td>
+                        <td> <a href="{% url 'pushkin:all_passive' %}"> <i class="fa fa-square-o"></i><sub></sub></a></td>
+                    </tr>
+                    <tr>
+                        <td>произведений:</td>
+                        <td id="active_w" class="w3-text-red">{{ active_w }}</td>
+                        <td> <a href="{% url 'pushkin:all_passive' 'with_writings' %}"> <i class="fa fa-square-o"></i><sub></sub></a></td>
+                    </tr>
+                </table>
+                <details>
+                    <summary>
+                        <b>Операции над выбранными</b>
+                    </summary>
+                    <br>
+                    <div class="w3-bar w3-light-grey w3-border w3-border-gray">
+                        <span class="w3-bar-item">Жанр:</span>
+                        <select class="w3-bar-item w3-input" name="genre" id="genre">
+                            <option class="w3-input" value="" selected disabled></option>
+                            {% for genre in genres %}
+                                <option value="{{ genre.0 }}">{{ genre.1 }}</option>
+                            {% endfor %}
+                        </select>
+                        <input class="w3-bar-item w3-button" type="submit" value="OK" onclick="setSelectedGenre()">
+                     </div>
+                     <div class="w3-bar w3-light-grey w3-border w3-border-gray mt-2">
+                        <span class="w3-bar-item"><i class="fa fa-trash w3-text-gray"></i> Удалить:</span>
+                        <a class="w3-bar-item w3-button" href="{% url 'pushkin:delete_selected' %}">OK</a>
+                     </div>
+                </details>
+            </div>
+
+            <div class="col-12 col-md-9 p-0 m-0 scroll">
+
+                <div class="w3-bar w3-light-grey w3-border-bottom w3-border-top w3-border-gray">
+                    <form id="search_form" action="{% url 'pushkin:search' %}" method="post">
+                        <span class="w3-bar-item"><i class="fa fa-filter"></i></span>
+                        <input id="author_filter" name="a_re" value="{{ a_re }}" type="text" class="w3-bar-item w3-input" placeholder="Автор">
+                        <span class="w3-bar-item"> </span>
+                        <input id="writing_filter" name="w_re" value="{{ w_re }}" type="text" class="w3-bar-item w3-input" placeholder="Произведение">
+                        <span class="w3-bar-item"> </span>
+                        <select name="mode" id="mode" class="w3-bar-item">
+                            <option value="all">All</option>
+                            <option value="selected_only" {% if mode == 'selected_only' %}selected{% endif %}>Selected</option>
+                        </select>
+                        <i class="fa"><input class="w3-bar-item w3-large" type="submit" value=&#xf002;></i>
+                        <a class="w3-bar-item" href="{% url 'pushkin:author_list' %}" rus="X" eng="X">X</a>
+                    </form>
+                </div>
+
+                {% if open %}<h2 id="search_result">Результаты поиска :</h2>{% endif %}
+
+                {% for author in object_list %}
+                    <details class="m-0 p-0 author" aid="{{ author.id }}" ontoggle="loadWritings({{author.id}})">
+                        <summary class="w3-light-gray p-1 mt-2 mx-0 mb-0">
+                            <name>{{ author }}</name> ({{ author.writings.count }})
+                            <details style="display:inline-block">
+                                <summary style="display:inline-block"> . . .</summary>
+                                <a class="button" href="{% url 'pushkin:author_detail' author.id %}"><i class="fa fa-arrows-h w3-text-red"></i><sub> сравнить</sub></a>
+                                <a class="button" href="{% url 'pushkin:author_update' author.id %}"><i class="fa fa-edit w3-text-blue"></i><sub></sub></a>
+                                <a class="button" href="{% url 'pushkin:markovify_author' author.id %}"><i class="fa fa-copy w3-text-indigo"></i><sub></sub></a>
+
+                                <span class="button" onclick="writingsActive({{ author.id }}, true)"><i class="fa fa-check-square-o w3-text-teal"></i><sub></sub></span>
+                                <span class="button" onclick="writingsActive({{ author.id }}, false)"><i class="fa fa-square-o w3-text-teal"></i><sub></sub></span>
+                            </details>
+                            <input class="toggle_author_active w3-check" type="checkbox" aid="{{ author.id }}" onchange="toggleAuthorActive({{ author.id }})" {% if author.active %}checked{% endif %}>
+                        </summary>
+                        <div class="writing_list" aid="{{ author.id }}"></div>
+                    </details>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadWritings(id) {
+            let mode = document.querySelector('#mode').value;
+            let w_re = document.querySelector('#writing_filter').value;
+            if (w_re != '') {w_re = '/' + w_re;}
+            let genres = [{% for g in genres %}'{{ g.1 }}', {% endfor %}];
+            const writings_div = document.querySelector(`.writing_list[aid="${id}"]`);
+            if (writings_div.innerHTML == '') {
+
+                info = await fetch(`/pushkin/author_info/${id}/${mode}${w_re}`)
+                    .then (response => response.json());
+                writings = await info.writings;
+                if (typeof writings != "undefined" && writings.length > 0) {
+                    for (var i =0; i < writings.length; i++) {
+                            writingEl = document.createElement("div");
+                            writingEl.className = 'ml-2 my-0 p-0 writing';
+                            writingEl.setAttribute('wid', writings[i].id);
+                            writingEl.setAttribute('aid', id);
+                            writingEl.innerHTML += `<a class="mr-2" href="writing_read/${writings[i].id}" target="_blank"><i><name>${writings[i].title}</name></i></a>`;
+                            detailsEl = document.createElement("details");
+                            detailsEl.style.display = 'inline-block';
+                            detailsEl.className = 'mr-3';
+                            detailsEl.innerHTML += '<summary style="display:inline-block;"> . . . </summary>';
+                            detailsEl.innerHTML += `<a class="button mx-2" href="writing_detail/${writings[i].id}"><i class="fa fa-arrows-h w3-text-blue"></i><sub>сравнить</sub></a>`;
+                            detailsEl.innerHTML += `<a class="button mx-2" href="writing_update/${writings[i].id}"><i class="fa fa-edit w3-text-blue"></i><sub></sub></a>`;
+                            detailsEl.innerHTML += `<a class="button mx-2" href="writing_info/${writings[i].id}"><i class="fa fa-info-circle w3-text-blue"></i><sub></sub></a>`;
+                            detailsEl.innerHTML += `<a class="button mx-2" href="writing_read/${writings[i].id}"><i class="fa fa-file-text-o w3-text-blue"></i><sub></sub></a>`;
+                            detailsEl.innerHTML += `<a class="button mx-2" href="markovify_writing/${writings[i].id}"><span><i class="fa fa-copy w3-text-blue"></i><sub></sub></span></a>`;
+                            writingEl.appendChild(detailsEl);
+                            if (writings[i].active == true) {
+                                checked = 'checked';
+                            } else {
+                                checked = '';
+                            }
+                            writingEl.innerHTML += `<input class="toggle_writing_active" type="checkbox" aid="${writings[i].author.id}" wid="${writings[i].id}" onchange="toggleWritingActive(${writings[i].id})" ${checked}>`;
+                            writingEl.innerHTML += ` <sub gid="${writings[i].id}">${genres[writings[i].genre-1]}</sub>`;
+                            writingEl.innerHTML += '<hr class="mt-0">';
+                            writings_div.appendChild(writingEl);
+                    };
+                };
+            };
+            filter();
+        }
+    </script>
+{% endblock %}

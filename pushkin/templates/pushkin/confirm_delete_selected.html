@@ -1,0 +1,37 @@
+{% extends "hub/layout.html" %}
+
+{% load static %}
+
+{% block main %}
+    <div class="w3-padding">
+        <h3>Точно удалить?</h3>
+        {% if writings %}
+            <h4>Произведения:</h4>
+            <ul>
+                {% for writing in writings %}
+                    <li>{{ writing.label }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% if authors %}
+            <ul>
+                <h4>Авторов и их произведения:</h4>
+                {% for author in authors %}
+                    <li><b>{{ author }}</b></li>
+                    <ul>
+                        {% for writing in author.writings.all %}
+                            <li>{{ writing }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h3>Уверен?</h3>
+        <br>
+        <a href="{% url 'pushkin:author_list' %}" class="w3-button w3-white w3-border w3-border-red w3-round-large w3-text-red">Нет, хуйню спорол</a>
+        <input form="yes_delete" type="submit" value="Хуячь!" class="w3-button w3-white w3-border w3-border-teal w3-round-large w3-text-teal">
+        <form id="yes_delete" action="{% url 'pushkin:delete_selected' %}" method="post">
+            {% csrf_token %}
+        </form>
+    </div>
+{% endblock %}

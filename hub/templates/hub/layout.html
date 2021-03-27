@@ -1,0 +1,180 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    	<meta charset="UTF-8">
+    	<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+
+        <title>{% block title %}VISSARION{% endblock %}</title>
+
+        {% block icon %}
+            <link rel="shortcut icon" href="{% static 'hub/pen_60.png' %}" type="image/png">
+        {% endblock %}
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <script src="https://kit.fontawesome.com/1482812741.js"></script>
+
+        <link href="{% static 'hub/styles.css' %}" rel="stylesheet">
+    {% endblock head %}
+</head>
+
+<body class="m-0 p-0">
+    {% block nav %}
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+
+        {% block home_link %}
+            <div class="menu-icon">
+                <a href="{% url 'hub:index' %}" data-toggle="tooltip" data-placement="bottom" title="Home page">
+                    <img src="{% static 'hub/pen_60.png' %}">
+                </a>
+            </div>
+        {% endblock %}
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse  nav-fill" id="navbarNav">
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav mr-auto">
+                    {% if user.is_superuser %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" nav_index="locations" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span rus="Авторы" eng="Authors">ADMIN</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{% url 'admin:index' %}" rus="Админ" eng="Admin">Admin</a>
+                                <a class="dropdown-item" href="{% url 'pushkin:library_view' %}">Library View</a>
+                                <a class="dropdown-item" href="{% url 'pushkin:library_info' %}">Library Info</a>
+                                <a class="dropdown-item" href="{% url 'pushkin:library_clean' %}">Library Clean</a>
+                                <a class="dropdown-item w3-text-red" href="{% url 'pushkin:library_load' %}">Library Load</a>
+                            </div>
+                        </li>
+                    {% endif %}
+
+                    {% if user.is_staff %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" nav_index="locations" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span rus="Авторы" eng="Authors">Авторы</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:author_list' %}"
+                                    rus="Список"
+                                    eng="List">Список</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:author_create' %}"
+                                    rus="Новый автор"
+                                    eng="New author">Новый автор</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:writing_create' %}"
+                                    rus="Новое произведение"
+                                    eng="New writing">Новое произведение</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" nav_index="locations" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span rus="Сравнить" eng="Compare">Сравнить</span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <p  class="dropdown-header"
+                                    rus="Произведения"
+                                    eng="Writings">Произведения</p>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'writings' 'mendenhall' %}"
+                                    rus="Менденхолл"
+                                    eng="Mendenhall">Mendenhall</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'writings' 'mendenhall_s' %}"
+                                    rus="Менденхолл-C"
+                                    eng="Mendenhall-S">Mendenhall-S</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'writings' 'kilgariff' %}"
+                                    rus="Килгарифф"
+                                    eng="Kilgariff">Kilgariff</a>
+                                <div class="dropdown-divider"></div>
+                                <p  class="dropdown-header"
+                                    rus="Авторы"
+                                    eng="Authors">Авторы</p>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'authors' 'mendenhall' %}"
+                                    rus="Менденхолл"
+                                    eng="Mendenhall">Mendenhall</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'authors' 'mendenhall_s' %}"
+                                    rus="Менденхолл-C"
+                                    eng="Mendenhall-S">Mendenhall-S</a>
+                                <a  class="dropdown-item"
+                                    href="{% url 'pushkin:plot_stats' 'authors' 'kilgariff' %}"
+                                    rus="Килгарифф"
+                                    eng="Kilgariff">Kilgariff</a>
+                            </div>
+                        </li>
+                        {% block nav_add %}
+                        {% endblock %}
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pushkin:sample_create' %}" rus="Загрузить шедевр" eng="Load masterpiece">Загрузить шедевр</a>
+                    </li>
+                </ul>
+            {% endif %}
+            <ul class="navbar-nav mr-1">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}" rus="Выход" eng="Log Out">Log Out</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}" rus="Вход" eng="Log In">Log In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account:register' %}" rus="Регистрация" eng="Register">Register</a>
+                    </li>
+                {% endif %}
+            </ul>
+            {% if user.is_authenticated %}
+                <div>
+                    <a href="#">
+                        <span class="nav-item w3-text-red">{{ user.username|upper }}</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+    {% endblock nav %}
+
+    <div id="messages">
+    {% block message %}
+    	{% if messages %}
+    		{% for message in messages %}
+    			<div class="alert {% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show py-0" role="alert">
+    				{{ message }}
+    				<button type="button" class="close py-0" data-dismiss="alert" aria-label="Close">
+    					<span aria-hidden="true" class="w3-text-red">&times;</span>
+    				</button>
+    			</div>
+    		{% endfor %}
+    	{% endif %}
+    {% endblock %}
+    </div>
+
+    {% block main %}
+    {% endblock %}
+
+    {% block footer %}
+        <footer class="w3-panel w3-light-gray w3-center m-0 mt-2">
+            © ANDY 2021, <a href="mailto:andymartynovmail@gmail.com"><i class="fa fa-envelope"></i> <span rus="Напишите мне" eng="Send me a mail">Send me a mail</span></a>
+        </footer>
+    {% endblock %}
+
+    {% block bottom_script %}
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    {% endblock %}
+</body>
+</html>
